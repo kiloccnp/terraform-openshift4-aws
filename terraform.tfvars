@@ -1,5 +1,5 @@
 cluster_name = "kilo-ocp"
-base_domain = "kiloccnp.org"
+base_domain = "on-stag.one"
 openshift_pull_secret = "./openshift_pull_secret.json"
 openshift_version = "4.6.28"
 
