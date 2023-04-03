@@ -1,5 +1,5 @@
-cluster_name = "ocp4"
-base_domain = "example.com"
+cluster_name = "kilo-ocp"
+base_domain = "kiloccnp.org"
 openshift_pull_secret = "./openshift_pull_secret.json"
 openshift_version = "4.6.28"
 
