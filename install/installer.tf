@@ -1,30 +1,29 @@
 resource "null_resource" "openshift_installer" {
   provisioner "local-exec" {
-      command = "wget https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.6.28/openshift-install-linux-4.6.28.tar.gz"
-
+    command = "wget https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.6.28/openshift-install-linux-4.6.28.tar.gz"
   }
 
   provisioner "local-exec" {
-    command = "tar zxvf ./openshift-install-linux-4.6.28.tar.gz -C ./"
+    command = "mkdir installer-files"
   }
 
   provisioner "local-exec" {
-
-    command = "rm -f ./openshift-install-linux-4.6.28.tar.gz .//robots*.txt* .//README.md"
+    command = "tar zxvf openshift-install-linux-4.6.28.tar.gz -C ./installer-files/"
   }
+
 }
 
+
 resource "null_resource" "openshift_client" {
-
-
   provisioner "local-exec" {
 
     command = "wget https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.6.28/openshift-client-linux-4.6.28.tar.gz"
   }
 
   provisioner "local-exec" {
-    command = "rm -f ./openshift-client-linux-4.6.28.tar.gz .//robots*.txt* .//README.md"
+    command = "tar zxvf openshift-client-linux-4.6.28.tar.gz -C .//installer-files/"
   }
+
 }
 
 resource "null_resource" "generate_manifests" {
@@ -39,19 +38,19 @@ resource "null_resource" "generate_manifests" {
   ]
 
   provisioner "local-exec" {
-    command = "rm -rf .//temp"
+    command = "rm -rf ${path.root}/installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p .//temp"
+    command = "mkdir -p ${path.root}/installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = "mv .//install-config.yaml .//temp"
+    command = "mv ${path.root}/installer-files//install-config.yaml ${path.root}/installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = ".//openshift-install --dir=.//temp create manifests"
+    command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files//temp create manifests"
   }
 }
 
@@ -67,7 +66,7 @@ resource "null_resource" "manifest_cleanup_control_plane_machineset" {
   }
 
   provisioner "local-exec" {
-    command = "rm -f .//temp/openshift/99_openshift-cluster-api_master-machines-*.yaml"
+    command = "rm -f ${path.root}/installer-files//temp/openshift/99_openshift-cluster-api_master-machines-*.yaml"
   }
 }
 
@@ -97,23 +96,23 @@ resource "null_resource" "generate_ignition_config" {
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p .//temp"
+    command = "mkdir -p ${path.root}/installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = "rm -rf .//temp/_manifests .//temp/_openshift"
+    command = "rm -rf ${path.root}/installer-files//temp/_manifests ${path.root}/installer-files//temp/_openshift"
   }
 
   provisioner "local-exec" {
-    command = "cp -r .//temp/manifests .//temp/_manifests"
+    command = "cp -r ${path.root}/installer-files//temp/manifests ${path.root}/installer-files//temp/_manifests"
   }
 
   provisioner "local-exec" {
-    command = "cp -r .//temp/openshift .//temp/_openshift"
+    command = "cp -r ${path.root}/installer-files//temp/openshift ${path.root}/installer-files//temp/_openshift"
   }
 
   provisioner "local-exec" {
-    command = ".//openshift-install --dir=.//temp create ignition-configs"
+    command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files//temp create ignition-configs"
   }
 }
 
@@ -125,7 +124,7 @@ resource "null_resource" "delete_aws_resources" {
   provisioner "local-exec" {
     when    = destroy
     command = "${path.module}/aws_cleanup.sh"
-    #command = ".//openshift-install --dir=./temp destroy cluster"
+    #command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files/temp destroy cluster"
   }
 
 }
@@ -137,22 +136,22 @@ resource "null_resource" "cleanup" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -rf .//temp"
+    command = "rm -rf ${path.root}/installer-files//temp"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -f .//openshift-install"
+    command = "rm -f ${path.root}/installer-files//openshift-install"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -f .//oc"
+    command = "rm -f ${path.root}/installer-files//oc"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -f .//kubectl"
+    command = "rm -f ${path.root}/installer-files//kubectl"
   }
 }
 
@@ -161,7 +160,7 @@ data "local_file" "bootstrap_ign" {
     null_resource.generate_ignition_config
   ]
 
-  filename =  ".//temp/bootstrap.ign"
+  filename =  "${path.root}/installer-files//temp/bootstrap.ign"
 }
 
 data "local_file" "master_ign" {
@@ -169,7 +168,7 @@ data "local_file" "master_ign" {
     null_resource.generate_ignition_config
   ]
 
-  filename =  ".//temp/master.ign"
+  filename =  "${path.root}/installer-files//temp/master.ign"
 }
 
 data "local_file" "worker_ign" {
@@ -177,14 +176,14 @@ data "local_file" "worker_ign" {
     null_resource.generate_ignition_config
   ]
 
-  filename =  ".//temp/worker.ign"
+  filename =  "${path.root}/installer-files//temp/worker.ign"
 }
 
 resource "null_resource" "get_auth_config" {
   depends_on = [null_resource.generate_ignition_config]
   provisioner "local-exec" {
     when    = create
-    command = "cp .//temp/auth/* ${path.root}/ "
+    command = "cp ${path.root}/installer-files//temp/auth/* ${path.root}/ "
   }
   provisioner "local-exec" {
     when    = destroy
