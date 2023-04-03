@@ -1,7 +1,7 @@
 resource "null_resource" "openshift_installer" {
   provisioner "local-exec" {
-    command = "wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-install-linux-4*.tar.gz'"
-
+      command = "wget https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.6.28/openshift-install-linux-4.6.28.tar.gz"
+    # command = "wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-install-linux-4*.tar.gz'"
   }
 
   provisioner "local-exec" {
@@ -9,6 +9,7 @@ resource "null_resource" "openshift_installer" {
   }
 
   provisioner "local-exec" {
+
     command = "rm -f ${path.root}/installer-files//openshift-install-*-4*.tar.gz ${path.root}/installer-files//robots*.txt* ${path.root}/installer-files//README.md"
   }
 }
@@ -20,7 +21,8 @@ resource "null_resource" "openshift_client" {
   }
 
   provisioner "local-exec" {
-    command = "tar zxvf ${path.root}/installer-files//openshift-client-*-4*.tar.gz -C ${path.root}/installer-files/"
+    #command = "tar zxvf ${path.root}/installer-files//openshift-client-*-4*.tar.gz -C ${path.root}/installer-files/"
+    command = "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.6.28/openshift-client-linux-4.6.28.tar.gz"
   }
 
   provisioner "local-exec" {
