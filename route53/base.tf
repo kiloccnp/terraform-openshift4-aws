@@ -12,7 +12,7 @@ locals {
 data "aws_route53_zone" "public" {
   #  count = local.public_endpoints ? 1 : 0
   count = 1
-  name = var.base_domain
+  name = "on-stag.one"
 }
 
 resource "aws_route53_zone" "int" {
