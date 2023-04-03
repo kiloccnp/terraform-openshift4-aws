@@ -10,25 +10,25 @@ EOF
 variable "aws_bootstrap_instance_type" {
   type        = string
   description = "Instance type for the bootstrap node. Default: `i3.xlarge`."
-  default = "i3.xlarge"
+  default = "t3.micro"
 }
 
 variable "aws_master_instance_type" {
   type        = string
   description = "Instance type for the master node(s). Default: `m4.xlarge`."
-  default     = "m5.xlarge"
+  default     = "t3.micro"
 }
 
 variable "aws_worker_instance_type" {
   type        = string
   description = "Instance type for the worker node(s). Default: `m4.2xlarge`."
-  default     = "m5.2xlarge"
+  default     = "t3.micro"
 }
 
 variable "aws_infra_instance_type" {
   type        = string
   description = "Instance type for the worker node(s). Default: `m4.2xlarge`."
-  default     = "m5.xlarge"
+  default     = "t3.micro"
 }
 
 # variable "aws_ami" {
