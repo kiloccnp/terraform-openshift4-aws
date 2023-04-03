@@ -61,7 +61,7 @@ networking:
 platform:
   aws:
     region: ${var.aws_region}
-pullSecret: "${path.root}/installer-files/install-config.yaml"
+pullSecret: '${file(var.openshift_pull_secret)}'
 sshKey: '${local.public_ssh_key}'
 %{if var.airgapped["enabled"]}imageContentSources:
 - mirrors:
