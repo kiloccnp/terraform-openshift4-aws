@@ -7,9 +7,9 @@ resource "null_resource" "openshift_installer" {
     command = "tar zxvf ${path.root}/installer-files//openshift-install-*-4*.tar.gz -C ${path.root}/installer-files/"
   }
 
-  provisioner "local-exec" {
-    command = "rm -f ${path.root}/installer-files//openshift-install-*-4*.tar.gz ${path.root}/installer-files//robots*.txt* ${path.root}/installer-files//README.md"
-  }
+#   provisioner "local-exec" {
+#     command = "rm -f ${path.root}/installer-files//openshift-install-*-4*.tar.gz ${path.root}/installer-files//robots*.txt* ${path.root}/installer-files//README.md"
+#   }
 }
 
 resource "null_resource" "openshift_client" {
@@ -21,9 +21,9 @@ resource "null_resource" "openshift_client" {
     command = "tar zxvf ${path.root}/installer-files//openshift-client-*-4*.tar.gz -C ${path.root}/installer-files/"
   }
 
-  provisioner "local-exec" {
-    command = "rm -f ${path.root}/installer-files//openshift-client-*-4*.tar.gz ${path.root}/installer-files//robots*.txt* ${path.root}/installer-files//README.md"
-  }
+#   provisioner "local-exec" {
+#     command = "rm -f ${path.root}/installer-files//openshift-client-*-4*.tar.gz ${path.root}/installer-files//robots*.txt* ${path.root}/installer-files//README.md"
+#   }
 }
 
 resource "null_resource" "generate_manifests" {
