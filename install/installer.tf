@@ -38,19 +38,19 @@ resource "null_resource" "generate_manifests" {
   ]
 
   provisioner "local-exec" {
-    command = "rm -rf ${path.root}/installer-files//temp"
+    command = "rm -rf .//installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p ${path.root}/installer-files//temp"
+    command = "mkdir -p .//installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = "mv ${path.root}/installer-files//install-config.yaml ${path.root}/installer-files//temp"
+    command = "mv .//installer-files//install-config.yaml .//installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files//temp create manifests"
+    command = ".//installer-files//openshift-install --dir=.//installer-files//temp create manifests"
   }
 }
 
@@ -66,7 +66,7 @@ resource "null_resource" "manifest_cleanup_control_plane_machineset" {
   }
 
   provisioner "local-exec" {
-    command = "rm -f ${path.root}/installer-files//temp/openshift/99_openshift-cluster-api_master-machines-*.yaml"
+    command = "rm -f .//installer-files//temp/openshift/99_openshift-cluster-api_master-machines-*.yaml"
   }
 }
 
@@ -96,23 +96,23 @@ resource "null_resource" "generate_ignition_config" {
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p ${path.root}/installer-files//temp"
+    command = "mkdir -p .//installer-files//temp"
   }
 
   provisioner "local-exec" {
-    command = "rm -rf ${path.root}/installer-files//temp/_manifests ${path.root}/installer-files//temp/_openshift"
+    command = "rm -rf .//installer-files//temp/_manifests .//installer-files//temp/_openshift"
   }
 
   provisioner "local-exec" {
-    command = "cp -r ${path.root}/installer-files//temp/manifests ${path.root}/installer-files//temp/_manifests"
+    command = "cp -r .//installer-files//temp/manifests .//installer-files//temp/_manifests"
   }
 
   provisioner "local-exec" {
-    command = "cp -r ${path.root}/installer-files//temp/openshift ${path.root}/installer-files//temp/_openshift"
+    command = "cp -r .//installer-files//temp/openshift .//installer-files//temp/_openshift"
   }
 
   provisioner "local-exec" {
-    command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files//temp create ignition-configs"
+    command = ".//installer-files//openshift-install --dir=.//installer-files//temp create ignition-configs"
   }
 }
 
@@ -124,7 +124,7 @@ resource "null_resource" "delete_aws_resources" {
   provisioner "local-exec" {
     when    = destroy
     command = "${path.module}/aws_cleanup.sh"
-    #command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files/temp destroy cluster"
+    #command = ".//installer-files//openshift-install --dir=.//installer-files/temp destroy cluster"
   }
 
 }
@@ -136,22 +136,22 @@ resource "null_resource" "cleanup" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -rf ${path.root}/installer-files//temp"
+    command = "rm -rf .//installer-files//temp"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -f ${path.root}/installer-files//openshift-install"
+    command = "rm -f .//installer-files//openshift-install"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -f ${path.root}/installer-files//oc"
+    command = "rm -f .//installer-files//oc"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "rm -f ${path.root}/installer-files//kubectl"
+    command = "rm -f .//installer-files//kubectl"
   }
 }
 
@@ -160,7 +160,7 @@ data "local_file" "bootstrap_ign" {
     null_resource.generate_ignition_config
   ]
 
-  filename =  "${path.root}/installer-files//temp/bootstrap.ign"
+  filename =  ".//installer-files//temp/bootstrap.ign"
 }
 
 data "local_file" "master_ign" {
@@ -168,7 +168,7 @@ data "local_file" "master_ign" {
     null_resource.generate_ignition_config
   ]
 
-  filename =  "${path.root}/installer-files//temp/master.ign"
+  filename =  ".//installer-files//temp/master.ign"
 }
 
 data "local_file" "worker_ign" {
@@ -176,17 +176,17 @@ data "local_file" "worker_ign" {
     null_resource.generate_ignition_config
   ]
 
-  filename =  "${path.root}/installer-files//temp/worker.ign"
+  filename =  ".//installer-files//temp/worker.ign"
 }
 
 resource "null_resource" "get_auth_config" {
   depends_on = [null_resource.generate_ignition_config]
   provisioner "local-exec" {
     when    = create
-    command = "cp ${path.root}/installer-files//temp/auth/* ${path.root}/ "
+    command = "cp .//installer-files//temp/auth/* .// "
   }
   provisioner "local-exec" {
     when    = destroy
-    command = "rm ${path.root}/kubeconfig ${path.root}/kubeadmin-password "
+    command = "rm .//kubeconfig .//kubeadmin-password "
   }
 }
