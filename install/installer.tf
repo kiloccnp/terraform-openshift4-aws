@@ -3,18 +3,18 @@ resource "null_resource" "openshift_installer" {
     command = "wget https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/4.6.28/openshift-install-linux-4.6.28.tar.gz"
   }
 
+  provisioner "local-exec" {
+    command = "mkdir ./installer-files/"
+  }
     provisioner "local-exec" {
     command = "mv openshift-install-linux-4.6.28.tar.gz ./installer-files/"
   }
   
   
   provisioner "local-exec" {
-    command = "tar zxvf ${path.root}/installer-files//openshift-install-*-4*.tar.gz -C ${path.root}/installer-files/"
+    command = "tar zxvf ${path.root}/installer-files/openshift-install-*-4*.tar.gz -C ${path.root}/installer-files/"
   }
 
-#   provisioner "local-exec" {
-#     command = "rm -f ${path.root}/installer-files//openshift-install-*-4*.tar.gz ${path.root}/installer-files//robots*.txt* ${path.root}/installer-files//README.md"
-#   }
 }
 
 resource "null_resource" "openshift_client" {
@@ -26,12 +26,10 @@ resource "null_resource" "openshift_client" {
   }
   
   provisioner "local-exec" {
-    command = "tar zxvf ${path.root}/installer-files//openshift-client-*-4*.tar.gz -C ${path.root}/installer-files/"
+    command = "tar zxvf ${path.root}/installer-files/openshift-client-*-4*.tar.gz -C ${path.root}/installer-files/"
   }
 
-#   provisioner "local-exec" {
-#     command = "rm -f ${path.root}/installer-files//openshift-client-*-4*.tar.gz ${path.root}/installer-files//robots*.txt* ${path.root}/installer-files//README.md"
-#   }
+
 }
 
 resource "null_resource" "generate_manifests" {
@@ -46,19 +44,19 @@ resource "null_resource" "generate_manifests" {
   ]
 
   provisioner "local-exec" {
-    command = "rm -rf ${path.root}/installer-files//temp"
+    command = "rm -rf ${path.root}/installer-files/temp"
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p ${path.root}/installer-files//temp"
+    command = "mkdir -p ${path.root}/installer-files/temp"
   }
 
   provisioner "local-exec" {
-    command = "mv ${path.root}/installer-files//install-config.yaml ${path.root}/installer-files//temp"
+    command = "cp ${path.root}/installer-files/install-config.yaml ${path.root}/installer-files/temp"
   }
 
   provisioner "local-exec" {
-    command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files//temp create manifests"
+    command = "${path.root}/installer-files/openshift-install --dir=${path.root}/installer-files/temp create manifests"
   }
 }
 
@@ -74,7 +72,7 @@ resource "null_resource" "manifest_cleanup_control_plane_machineset" {
   }
 
   provisioner "local-exec" {
-    command = "rm -f ${path.root}/installer-files//temp/openshift/99_openshift-cluster-api_master-machines-*.yaml"
+    command = "rm -f ${path.root}/installer-files/temp/openshift/99_openshift-cluster-api_master-machines-*.yaml"
   }
 }
 
@@ -104,23 +102,23 @@ resource "null_resource" "generate_ignition_config" {
   }
 
   provisioner "local-exec" {
-    command = "mkdir -p ${path.root}/installer-files//temp"
+    command = "mkdir -p ${path.root}/installer-files/temp"
   }
 
   provisioner "local-exec" {
-    command = "rm -rf ${path.root}/installer-files//temp/_manifests ${path.root}/installer-files//temp/_openshift"
+    command = "rm -rf ${path.root}/installer-files/temp/_manifests ${path.root}/installer-files/temp/_openshift"
   }
 
   provisioner "local-exec" {
-    command = "cp -r ${path.root}/installer-files//temp/manifests ${path.root}/installer-files//temp/_manifests"
+    command = "cp -rp ${path.root}/installer-files/temp/manifests ${path.root}/installer-files/temp/_manifests"
   }
 
   provisioner "local-exec" {
-    command = "cp -r ${path.root}/installer-files//temp/openshift ${path.root}/installer-files//temp/_openshift"
+    command = "cp -rp ${path.root}/installer-files/temp/openshift ${path.root}/installer-files/temp/_openshift"
   }
 
   provisioner "local-exec" {
-    command = "${path.root}/installer-files//openshift-install --dir=${path.root}/installer-files//temp create ignition-configs"
+    command = "${path.root}/installer-files/openshift-install --dir=${path.root}/installer-files/temp create ignition-configs"
   }
 }
 
