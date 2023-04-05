@@ -4,10 +4,10 @@ resource "null_resource" "openshift_installer" {
 
   }
 
-  provisioner "local-exec" {
-    command = "mkdir installer-files"
+#   provisioner "local-exec" {
+#     command = "mkdir installer-files"
 
-  }
+#   }
   
     provisioner "local-exec" {
     command = "cp -rp openshift-install-linux-4.6.28.tar.gz ./installer-files/"
