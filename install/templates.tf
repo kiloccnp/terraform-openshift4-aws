@@ -61,6 +61,8 @@ networking:
 platform:
   aws:
     region: ${var.aws_region}
+    iamRole: kilo-ocp
+    iamRoleThis: kilo-ocp
 pullSecret: '${file(var.openshift_pull_secret)}'
 sshKey: '${local.public_ssh_key}'
 %{if var.airgapped["enabled"]}imageContentSources:
