@@ -1,6 +1,6 @@
 resource "null_resource" "openshift_installer" {
   provisioner "local-exec" {
-    command = wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-install-linux-4*.tar.gz'
+    command = "wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-install-linux-4*.tar.gz'"
 
   }
 
@@ -15,7 +15,7 @@ resource "null_resource" "openshift_installer" {
 
 resource "null_resource" "openshift_client" {
   provisioner "local-exec" {
-    command = wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-client-linux-4*.tar.gz'
+    command = "wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-client-linux-4*.tar.gz'"
   }
 
   provisioner "local-exec" {
