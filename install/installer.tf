@@ -1,17 +1,7 @@
 resource "null_resource" "openshift_installer" {
   provisioner "local-exec" {
-    command = <<EOF
-case $(uname -s) in
-  Linux)
-    wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-install-linux-4*.tar.gz'
-    ;;
-  Darwin)
-    wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-install-mac-4*.tar.gz'
-    ;;
-  *) exit 1
-    ;;
-esac
-EOF
+    command = wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-install-linux-4*.tar.gz'
+
   }
 
   provisioner "local-exec" {
@@ -25,19 +15,7 @@ EOF
 
 resource "null_resource" "openshift_client" {
   provisioner "local-exec" {
-    command = <<EOF
-case $(uname -s) in
-  Linux)
-    wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-client-linux-4*.tar.gz'
-    ;;
-  Darwin)
-    wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-client-mac-4*.tar.gz'
-    ;;
-  *)
-    exit 1
-    ;;
-esac
-EOF
+    command = wget -r -l1 -np -nd ${var.openshift_installer_url} -q -P ${path.root}/installer-files/ -A 'openshift-client-linux-4*.tar.gz'
   }
 
   provisioner "local-exec" {
